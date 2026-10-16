@@ -321,6 +321,12 @@
   .form-status.ok { color: #2e9d4f; }
   .form-status.err { color: var(--red); }
 
+  /* 댓글 */
+  .comments { padding: 24px 22px 18px; }
+  .comments h2 { font-size: 20px; font-weight: 900; color: var(--red); margin-bottom: 12px; }
+  #disqus_thread { color: var(--ink); min-height: 60px; }
+  #disqus_thread a { color: var(--red); }
+
   @media (max-width: 420px) {
     .head h1 { font-size: 28px; }
     .ball { width: 36px; height: 36px; font-size: 15px; }
@@ -388,6 +394,12 @@
       <button type="submit" id="send">문의 보내기</button>
       <p class="form-status" id="form-status" role="status"></p>
     </form>
+  </section>
+
+  <section class="ticket comments" aria-labelledby="comments-title">
+    <h2 id="comments-title">댓글</h2>
+    <div id="disqus_thread"></div>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </section>
 
   <div class="toast" id="toast">복사되었습니다</div>
@@ -492,6 +504,8 @@
     themeBtn.querySelector(".icon").textContent = dark ? "☀️" : "🌙";
     themeBtn.querySelector(".text").textContent = dark ? "라이트 모드" : "다크 모드";
     themeBtn.setAttribute("aria-pressed", dark);
+    // Disqus는 로드 시점의 글자색으로 테마를 정하므로, 전환 시 다시 불러와 맞춤
+    if (window.DISQUS) DISQUS.reset({ reload: true, config: disqus_config });
   }
   themeBtn.addEventListener("click", () => {
     const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
@@ -499,6 +513,18 @@
     try { localStorage.setItem("theme", next); } catch (e) {}
   });
   applyTheme(document.documentElement.dataset.theme);
+
+  // Disqus 댓글
+  var disqus_config = function () {
+    this.page.url = location.origin + location.pathname;
+    this.page.identifier = "lotto-645-home";
+  };
+  (function () {
+    var d = document, s = d.createElement("script");
+    s.src = "https://productbuildertest-3.disqus.com/embed.js";
+    s.setAttribute("data-timestamp", +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
   renderEmpty();
 </script>
 </body>
