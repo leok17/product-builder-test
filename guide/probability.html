@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로또 당첨 확률, 직접 계산해 보기 | 로또 6/45 번호 추출기</title>
+<meta name="description" content="로또 1등 확률이 왜 8,145,060분의 1인지 조합 공식으로 직접 계산합니다. 2등부터 5등까지의 확률, 여러 게임을 살 때의 확률, 체감하기 쉬운 비교까지 정리했습니다.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="로또 6/45 번호 추출기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="로또 당첨 확률, 직접 계산해 보기">
+<meta property="og:description" content="로또 1등 확률이 왜 8,145,060분의 1인지 조합 공식으로 직접 계산합니다. 2등부터 5등까지의 확률, 여러 게임을 살 때의 확률, 체감하기 쉬운 비교까지 정리했습니다.">
+<meta name="theme-color" content="#d6232a">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<script>
+  // 저장된 테마 또는 시스템 설정을 렌더링 전에 적용 (깜빡임 방지)
+  (function () {
+    let t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<!-- Google AdSense: 게시자 ID를 받은 뒤 아래 주석을 풀고 ca-pub-0000000000000000 을 본인 ID로 바꾸세요 (콘텐츠 페이지에만 넣습니다)
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+-->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "로또 당첨 확률, 직접 계산해 보기",
+ "description": "로또 1등 확률이 왜 8,145,060분의 1인지 조합 공식으로 직접 계산합니다. 2등부터 5등까지의 확률, 여러 게임을 살 때의 확률, 체감하기 쉬운 비교까지 정리했습니다.",
+ "inLanguage": "ko",
+ "dateModified": "2026-10-17",
+ "author": {
+  "@type": "Organization",
+  "name": "로또 6/45 번호 추출기"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "로또 6/45 번호 추출기"
+ }
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#content">본문 바로가기</a>
+<header class="site-header">
+  <div class="wrap top">
+    <a class="brand" href="../index.html"><span class="mark">로또</span>6/45 번호 추출기</a>
+    <button id="theme" type="button" aria-label="테마 전환"><span class="icon"></span><span class="text"></span></button>
+  </div>
+  <nav class="site-nav wrap" aria-label="주요 메뉴">
+    <ul>
+      <li><a href="../index.html">번호 추출기</a></li>
+      <li><a href="../simulator.html">당첨 시뮬레이터</a></li>
+      <li><a href="../guide/index.html" aria-current="page">로또 가이드</a></li>
+      <li><a href="../about.html">사이트 소개</a></li>
+      <li><a href="../contact.html">문의하기</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="content">
+  <div class="wrap">
+    <nav class="breadcrumb" aria-label="현재 위치"><a href="../index.html">홈</a><span aria-hidden="true">›</span><a href="index.html">로또 가이드</a><span aria-hidden="true">›</span>당첨 확률 계산</nav>
+    <article class="card prose">
+      <h1>로또 당첨 확률, 직접 계산해 보기</h1>
+      <p class="lead">“로또 1등 확률은 814만분의 1”이라는 말은 많이 들어 봤지만, 이 숫자가 어디서 나오는지 아는 사람은 드뭅니다. 중학교 수준의 경우의 수만으로 1등부터 5등까지의 확률을 직접 구해 봅시다.</p>
+      <p class="meta">최종 점검일: 2026-10-17</p>
+
+      <nav class="toc" aria-label="목차">
+        <strong>목차</strong>
+        <ol>
+          <li><a href="#comb">준비물: 조합(C) 한 가지</a></li>
+          <li><a href="#first">1등: 8,145,060분의 1</a></li>
+          <li><a href="#others">2등~5등 계산하기</a></li>
+          <li><a href="#summary">한눈에 보는 등위별 확률</a></li>
+          <li><a href="#many">여러 게임을 사면 얼마나 오를까</a></li>
+          <li><a href="#feel">숫자를 체감해 보기</a></li>
+        </ol>
+      </nav>
+
+      <h2 id="comb">1. 준비물: 조합(C) 한 가지</h2>
+      <p>순서를 따지지 않고 n개 중에서 r개를 고르는 방법의 수를 <strong>조합</strong>이라 하고 <code>C(n, r)</code>로 씁니다. 계산식은 다음과 같습니다.</p>
+      <pre><code>C(n, r) = n! / ( r! × (n − r)! )</code></pre>
+      <p>예를 들어 5명 중 대표 2명을 뽑는 방법은 <code>C(5, 2) = (5 × 4) / (2 × 1) = 10</code>가지입니다. 로또도 당첨번호의 <strong>순서는 상관없이</strong> 어떤 6개가 나왔는지만 보므로 조합으로 계산합니다.</p>
+
+      <h2 id="first">2. 1등: 8,145,060분의 1</h2>
+      <p>45개 번호 중 6개를 고르는 방법의 수는</p>
+      <pre><code>C(45, 6) = (45 × 44 × 43 × 42 × 41 × 40) / (6 × 5 × 4 × 3 × 2 × 1)
+         = 5,864,443,200 / 720
+         = 8,145,060</code></pre>
+      <p>즉 가능한 번호 조합은 모두 <strong>8,145,060가지</strong>이고, 그중 당첨 조합은 딱 하나입니다. 그래서 한 게임으로 1등이 될 확률은 <strong>1 / 8,145,060 ≈ 0.0000123%</strong>입니다.</p>
+
+      <h2 id="others">3. 2등~5등 계산하기</h2>
+      <p>나머지 등위는 “당첨번호 6개 중 몇 개를 맞히고, 나머지 번호는 어디서 고르는가”로 나눠서 셉니다. 45개 번호는 다음 세 묶음으로 나눌 수 있습니다.</p>
+      <ul>
+        <li>당첨번호 6개</li>
+        <li>보너스 번호 1개</li>
+        <li>그 밖의 번호 38개</li>
+      </ul>
+
+      <h3>2등: 5개 일치 + 보너스 일치</h3>
+      <p>당첨번호 6개 중 5개를 고르는 방법 <code>C(6, 5) = 6</code>가지, 그리고 남은 한 자리는 반드시 보너스 번호여야 하므로 1가지입니다.</p>
+      <pre><code>6 × 1 = 6가지  →  6 / 8,145,060 = 1 / 1,357,510</code></pre>
+
+      <h3>3등: 5개 일치 (보너스 불일치)</h3>
+      <p>당첨번호 5개를 고르는 6가지에, 남은 한 자리는 보너스를 제외한 38개 중 하나입니다.</p>
+      <pre><code>6 × 38 = 228가지  →  228 / 8,145,060 ≈ 1 / 35,724</code></pre>
+
+      <h3>4등: 4개 일치</h3>
+      <p>당첨번호 6개 중 4개 <code>C(6, 4) = 15</code>가지, 남은 두 자리는 당첨번호가 아닌 39개(보너스 포함) 중 2개 <code>C(39, 2) = 741</code>가지입니다. 4등은 보너스 번호를 따지지 않으므로 보너스도 ‘그 밖의 번호’에 넣어 셉니다.</p>
+      <pre><code>15 × 741 = 11,115가지  →  11,115 / 8,145,060 ≈ 1 / 733</code></pre>
+
+      <h3>5등: 3개 일치</h3>
+      <pre><code>C(6, 3) × C(39, 3) = 20 × 9,139 = 182,780가지  →  ≈ 1 / 44.6</code></pre>
+
+      <h2 id="summary">4. 한눈에 보는 등위별 확률</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>등위</th><th class="num">해당 조합 수</th><th class="num">확률</th><th class="num">백분율</th></tr></thead>
+          <tbody>
+            <tr><td>1등</td><td class="num">1</td><td class="num">1 / 8,145,060</td><td class="num">0.0000123%</td></tr>
+            <tr><td>2등</td><td class="num">6</td><td class="num">1 / 1,357,510</td><td class="num">0.0000737%</td></tr>
+            <tr><td>3등</td><td class="num">228</td><td class="num">1 / 35,724</td><td class="num">0.0028%</td></tr>
+            <tr><td>4등</td><td class="num">11,115</td><td class="num">1 / 733</td><td class="num">0.136%</td></tr>
+            <tr><td>5등</td><td class="num">182,780</td><td class="num">1 / 44.6</td><td class="num">2.24%</td></tr>
+            <tr><td><strong>5등 이상 전체</strong></td><td class="num">194,130</td><td class="num">1 / 42</td><td class="num">2.38%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>한 게임을 사면 약 97.6%의 확률로 아무것도 당첨되지 않습니다. 5,000원어치(5게임)를 사도 5등 이상이 하나라도 나올 확률은 약 11.4%입니다.</p>
+
+      <h2 id="many">5. 여러 게임을 사면 얼마나 오를까</h2>
+      <p>서로 다른 번호 조합으로 k게임을 사면 1등 확률은 정확히 <strong>k / 8,145,060</strong>입니다. 같은 회차에 서로 다른 조합 두 개가 동시에 1등이 될 수는 없기 때문에 단순히 더하면 됩니다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>한 회차 구매</th><th class="num">구매액</th><th class="num">1등 확률</th></tr></thead>
+          <tbody>
+            <tr><td>1게임</td><td class="num">1,000원</td><td class="num">1 / 8,145,060</td></tr>
+            <tr><td>5게임</td><td class="num">5,000원</td><td class="num">1 / 1,629,012</td></tr>
+            <tr><td>100게임(법정 한도)</td><td class="num">100,000원</td><td class="num">1 / 81,451</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>법정 한도인 10만 원어치를 사도 1등 확률은 8만분의 1 수준입니다. 확률은 구매액에 비례해 오르지만, 기대 손실도 똑같이 비례해 커집니다. 1,000원당 평균 약 500원이 돌아오는 구조이므로 10만 원을 쓰면 평균적으로 약 5만 원을 잃게 됩니다.</p>
+      <p>매주 사는 경우는 어떨까요? 매주 5게임씩 산다면 1년(52주) 동안 1등을 한 번이라도 할 확률은 약 <strong>0.0032%</strong>입니다. 이 확률이 50%가 되려면 약 2만 1천 년이 걸립니다. 직접 실험해 보고 싶다면 <a href="../simulator.html">당첨 시뮬레이터</a>를 이용해 보세요.</p>
+
+      <h2 id="feel">6. 숫자를 체감해 보기</h2>
+      <p>8,145,060분의 1은 너무 작아서 감이 오지 않습니다. 직접 계산할 수 있는 비교를 몇 가지 들어 보겠습니다.</p>
+      <ul>
+        <li><strong>동전 던지기:</strong> 동전을 23번 던져 모두 앞면이 나올 확률은 1 / 8,388,608로, 로또 1등과 거의 같습니다.</li>
+        <li><strong>주사위:</strong> 주사위 9개를 던져 모두 6이 나올 확률(1 / 10,077,696)보다 조금 높은 정도입니다.</li>
+        <li><strong>시간으로 환산:</strong> 1초에 한 조합씩 쉬지 않고 모든 조합을 적으면 약 94일이 걸립니다.</li>
+      </ul>
+
+      <div class="callout">
+        <p><strong>핵심 정리:</strong> 어떤 번호를 고르든, 어떤 방식으로 고르든, 한 게임의 1등 확률은 1 / 8,145,060입니다. 확률을 바꿀 수 있는 유일한 방법은 더 많이 사는 것이고, 그만큼 평균 손실도 커집니다.</p>
+      </div>
+
+      <div class="related">
+        <h2>다음으로 읽을 글</h2>
+        <div class="guide-list">
+          <a href="myths.html"><strong>로또에 대한 흔한 오해 7가지</strong><span>확률을 알면 보이는 착각들</span></a>
+          <a href="../simulator.html"><strong>당첨 시뮬레이터</strong><span>계산 결과를 직접 실험으로 확인</span></a>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="resp">복권은 <b>만 19세 이상</b>만 구매할 수 있으며, 재미로 즐길 수 있는 금액 안에서만 구매하세요. 도박 문제로 고민된다면 <b>한국도박문제예방치유원 ☎ 1336</b>(24시간, 무료)에서 상담받을 수 있습니다.</p>
+    <nav aria-label="사이트 정보">
+      <ul>
+        <li><a href="../about.html">사이트 소개</a></li>
+        <li><a href="../privacy.html">개인정보처리방침</a></li>
+        <li><a href="../terms.html">이용약관</a></li>
+        <li><a href="../contact.html">문의하기</a></li>
+        <li><a href="../guide/index.html">로또 가이드</a></li>
+      </ul>
+    </nav>
+    <p>본 사이트는 복권위원회·동행복권과 관계없는 개인이 운영하는 비공식 정보 사이트입니다. 공식 당첨번호와 판매 정보는 <a href="https://dhlottery.co.kr" rel="noopener" target="_blank">동행복권 공식 홈페이지</a>에서 확인하세요.</p>
+    <p>© 2026 로또 6/45 번호 추출기</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

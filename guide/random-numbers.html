@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>무작위 번호는 어떻게 만들어질까 – 공정한 로또 번호 추출기의 원리 | 로또 6/45 번호 추출기</title>
+<meta name="description" content="의사 난수와 암호학적 난수의 차이, 모듈로 편향과 버림 샘플링, 피셔-예이츠 셔플까지 공정한 로또 번호 추출기를 만드는 원리를 실제 코드와 함께 설명합니다.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="로또 6/45 번호 추출기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="무작위 번호는 어떻게 만들어질까 – 공정한 로또 번호 추출기의 원리">
+<meta property="og:description" content="의사 난수와 암호학적 난수의 차이, 모듈로 편향과 버림 샘플링, 피셔-예이츠 셔플까지 공정한 로또 번호 추출기를 만드는 원리를 실제 코드와 함께 설명합니다.">
+<meta name="theme-color" content="#d6232a">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<script>
+  // 저장된 테마 또는 시스템 설정을 렌더링 전에 적용 (깜빡임 방지)
+  (function () {
+    let t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<!-- Google AdSense: 게시자 ID를 받은 뒤 아래 주석을 풀고 ca-pub-0000000000000000 을 본인 ID로 바꾸세요 (콘텐츠 페이지에만 넣습니다)
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+-->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "무작위 번호는 어떻게 만들어질까 – 공정한 로또 번호 추출기의 원리",
+ "description": "의사 난수와 암호학적 난수의 차이, 모듈로 편향과 버림 샘플링, 피셔-예이츠 셔플까지 공정한 로또 번호 추출기를 만드는 원리를 실제 코드와 함께 설명합니다.",
+ "inLanguage": "ko",
+ "dateModified": "2026-10-17",
+ "author": {
+  "@type": "Organization",
+  "name": "로또 6/45 번호 추출기"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "로또 6/45 번호 추출기"
+ }
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#content">본문 바로가기</a>
+<header class="site-header">
+  <div class="wrap top">
+    <a class="brand" href="../index.html"><span class="mark">로또</span>6/45 번호 추출기</a>
+    <button id="theme" type="button" aria-label="테마 전환"><span class="icon"></span><span class="text"></span></button>
+  </div>
+  <nav class="site-nav wrap" aria-label="주요 메뉴">
+    <ul>
+      <li><a href="../index.html">번호 추출기</a></li>
+      <li><a href="../simulator.html">당첨 시뮬레이터</a></li>
+      <li><a href="../guide/index.html" aria-current="page">로또 가이드</a></li>
+      <li><a href="../about.html">사이트 소개</a></li>
+      <li><a href="../contact.html">문의하기</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="content">
+  <div class="wrap">
+    <nav class="breadcrumb" aria-label="현재 위치"><a href="../index.html">홈</a><span aria-hidden="true">›</span><a href="index.html">로또 가이드</a><span aria-hidden="true">›</span>무작위 번호의 원리</nav>
+    <article class="card prose">
+      <h1>무작위 번호는 어떻게 만들어질까</h1>
+      <p class="lead">컴퓨터는 정해진 명령대로만 움직이는 기계입니다. 그런 컴퓨터가 어떻게 ‘예측할 수 없는’ 번호를 만들어 낼까요? 이 사이트의 번호 추출기가 공정한 번호를 뽑기 위해 사용하는 방법을 단계별로 설명합니다.</p>
+      <p class="meta">최종 점검일: 2026-10-17</p>
+
+      <nav class="toc" aria-label="목차">
+        <strong>목차</strong>
+        <ol>
+          <li><a href="#prng">의사 난수와 암호학적 난수</a></li>
+          <li><a href="#bias">숨어 있는 함정: 모듈로 편향</a></li>
+          <li><a href="#pick">중복 없이 6개 고르기</a></li>
+          <li><a href="#code">이 사이트의 실제 코드</a></li>
+          <li><a href="#test">정말 공정한지 확인하는 방법</a></li>
+        </ol>
+      </nav>
+
+      <h2 id="prng">1. 의사 난수와 암호학적 난수</h2>
+      <p>대부분의 프로그래밍 언어에는 난수 함수가 들어 있습니다. 자바스크립트의 <code>Math.random()</code>이 대표적입니다. 이런 함수는 <strong>의사 난수 생성기(PRNG)</strong>라고 부르는데, ‘시드(seed)’라는 시작값에 정해진 수식을 반복 적용해 그럴듯하게 무작위처럼 보이는 수열을 만듭니다. 시드와 수식을 알면 다음 값을 정확히 예측할 수 있기 때문에 ‘의사(擬似)’라는 이름이 붙었습니다.</p>
+      <p>게임이나 시각 효과에는 의사 난수로 충분합니다. 하지만 비밀번호, 암호 키처럼 예측되면 안 되는 값에는 <strong>암호학적으로 안전한 난수 생성기(CSPRNG)</strong>를 사용합니다. 운영체제가 하드웨어 타이밍, 인터럽트 같은 예측하기 어려운 물리적 잡음을 모아 시드로 쓰고, 출력값으로부터 내부 상태를 역산할 수 없도록 설계된 알고리즘을 사용합니다. 브라우저에서는 <code>crypto.getRandomValues()</code>로 이 난수원을 쓸 수 있습니다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>Math.random()</th><th>crypto.getRandomValues()</th></tr></thead>
+          <tbody>
+            <tr><td>종류</td><td>의사 난수(PRNG)</td><td>암호학적 난수(CSPRNG)</td></tr>
+            <tr><td>예측 가능성</td><td>내부 상태가 알려지면 예측 가능</td><td>사실상 예측 불가능</td></tr>
+            <tr><td>주 용도</td><td>게임, 애니메이션, 시뮬레이션</td><td>암호 키, 토큰, 공정성이 중요한 추첨</td></tr>
+            <tr><td>속도</td><td>매우 빠름</td><td>충분히 빠름(번호 추출에는 체감 차이 없음)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>로또 번호를 뽑는 데 엄청난 보안이 필요한 것은 아니지만, “특정 번호가 더 잘 나오지 않는다”는 것을 자신 있게 말하려면 품질이 검증된 난수원을 쓰는 편이 낫습니다. 그래서 이 사이트는 CSPRNG를 사용합니다.</p>
+
+      <h2 id="bias">2. 숨어 있는 함정: 모듈로 편향</h2>
+      <p>CSPRNG가 주는 것은 0부터 4,294,967,295(2³² − 1)까지의 32비트 정수입니다. 이것을 1~45 사이의 번호로 바꾸는 가장 쉬운 방법은 45로 나눈 나머지를 쓰는 것입니다.</p>
+      <pre><code>번호 = (난수 % 45) + 1   // 간단하지만 아주 미세하게 불공정</code></pre>
+      <p>문제는 2³²이 45로 나누어떨어지지 않는다는 점입니다. 2³² = 45 × 95,443,717 + 31이므로, 나머지가 0~30인 경우는 95,443,718번씩, 31~44인 경우는 95,443,717번씩 나옵니다. 즉 <strong>1~31번이 32~45번보다 아주 조금 더 자주 뽑힙니다.</strong> 이를 <strong>모듈로 편향</strong>이라고 합니다.</p>
+      <p>차이는 약 1억분의 1 수준이라 실제로 체감할 수는 없습니다. 하지만 고치는 방법이 간단하므로 굳이 남겨 둘 이유가 없습니다. 해결책은 <strong>버림 샘플링(rejection sampling)</strong>입니다. 45의 배수 중 2³²보다 작은 가장 큰 값(45 × 95,443,717)을 경계로 정하고, 난수가 그 이상이면 버리고 다시 뽑습니다. 그러면 남은 범위는 45로 정확히 나누어떨어져 모든 번호의 확률이 완전히 같아집니다. 다시 뽑아야 할 확률은 약 1억 4천만분의 1이라 속도에도 영향이 없습니다.</p>
+
+      <h2 id="pick">3. 중복 없이 6개 고르기</h2>
+      <p>번호 하나를 공정하게 뽑을 수 있다면, 이제 서로 다른 6개를 골라야 합니다. 흔히 쓰는 방법은 두 가지입니다.</p>
+      <h3>방법 A: 뽑고, 겹치면 다시 뽑기</h3>
+      <p>1~45 중 하나를 뽑아 이미 나온 번호면 버리고 다시 뽑습니다. 결과는 공정하지만 이미 뽑은 번호가 많아질수록 헛수고가 늘어납니다.</p>
+      <h3>방법 B: 통에서 꺼내기(비복원 추출)</h3>
+      <p>1~45가 적힌 목록을 만들고, 목록에서 무작위 위치의 번호를 하나 꺼내 결과에 넣습니다. 꺼낸 번호는 목록에서 사라지므로 다음에는 44개 중에서, 그다음에는 43개 중에서 고르게 됩니다. 실제 추첨기에서 공이 빠져나가는 것과 같은 방식이며, 헛수고가 전혀 없습니다. 이 아이디어를 배열 안에서 자리 바꾸기로 효율적으로 구현한 것이 <strong>피셔-예이츠 셔플</strong>입니다. 이 사이트의 추출기는 방법 B를, 많은 횟수를 빠르게 돌려야 하는 <a href="../simulator.html">시뮬레이터</a>는 피셔-예이츠 셔플을 앞의 7칸까지만 수행하는 방식을 씁니다.</p>
+
+      <h2 id="code">4. 이 사이트의 실제 코드</h2>
+      <p>번호 추출기의 핵심 코드는 아래가 전부입니다. 누구나 브라우저의 ‘페이지 소스 보기’로 확인할 수 있습니다.</p>
+      <pre><code>// 0 이상 max 미만의 정수를 균일하게 뽑기 (모듈로 편향 제거)
+function randInt(max) {
+  const limit = Math.floor(0x100000000 / max) * max;
+  const buf = new Uint32Array(1);
+  do { crypto.getRandomValues(buf); } while (buf[0] &gt;= limit);
+  return buf[0] % max;
+}
+
+// 1~45가 든 통에서 6개를 꺼내 오름차순으로 정렬
+function pickSix() {
+  const pool = Array.from({ length: 45 }, (_, i) =&gt; i + 1);
+  const out = [];
+  for (let i = 0; i &lt; 6; i++) out.push(pool.splice(randInt(pool.length), 1)[0]);
+  return out.sort((a, b) =&gt; a - b);
+}</code></pre>
+      <p><code>0x100000000</code>은 2³²입니다. <code>limit</code>은 그보다 작은 max의 최대 배수이고, 난수가 이 값 이상이면 반복문이 다시 뽑습니다. 번호 고정·제외 기능을 쓰면 고정 번호를 먼저 넣고, 제외 번호를 뺀 통에서 나머지를 같은 방식으로 꺼냅니다.</p>
+
+      <h2 id="test">5. 정말 공정한지 확인하는 방법</h2>
+      <p>코드가 맞더라도 실제 결과로 확인해 보는 것이 좋습니다. 가장 간단한 방법은 번호를 아주 많이 뽑아 각 번호의 출현 횟수를 세는 것입니다. 예를 들어 6개씩 100만 게임을 뽑으면 번호 하나당 기대 출현 횟수는 600만 ÷ 45 ≈ 133,333번입니다. 공정한 생성기라면 각 번호의 횟수가 이 값에서 표준편차(약 340) 몇 배 이내로 흩어져 있어야 합니다.</p>
+      <p>통계학에서는 이를 <strong>카이제곱 적합도 검정</strong>으로 정량화합니다. 각 번호의 (관측값 − 기대값)² ÷ 기대값을 모두 더한 값이 자유도 44의 카이제곱 분포에서 흔히 나오는 범위(95% 구간 기준 약 28~64)에 있으면, 편향의 증거가 없다고 판단합니다. 공정한 생성기도 우연히 이 범위를 벗어날 수 있으므로, 여러 번 반복해서 대부분 범위 안에 드는지 보는 것이 정확합니다.</p>
+      <div class="callout info">
+        <p><strong>기억할 점:</strong> 공정한 추출기가 보장하는 것은 “모든 조합이 똑같은 확률로 나온다”는 것까지입니다. 아무리 좋은 난수를 써도 당첨 확률 자체는 1 / 8,145,060에서 바뀌지 않습니다.</p>
+      </div>
+
+      <div class="related">
+        <h2>다음으로 읽을 글</h2>
+        <div class="guide-list">
+          <a href="probability.html"><strong>당첨 확률 계산하기</strong><span>조합으로 구하는 등위별 확률</span></a>
+          <a href="myths.html"><strong>로또에 대한 흔한 오해 7가지</strong><span>패턴 분석이 소용없는 이유</span></a>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="resp">복권은 <b>만 19세 이상</b>만 구매할 수 있으며, 재미로 즐길 수 있는 금액 안에서만 구매하세요. 도박 문제로 고민된다면 <b>한국도박문제예방치유원 ☎ 1336</b>(24시간, 무료)에서 상담받을 수 있습니다.</p>
+    <nav aria-label="사이트 정보">
+      <ul>
+        <li><a href="../about.html">사이트 소개</a></li>
+        <li><a href="../privacy.html">개인정보처리방침</a></li>
+        <li><a href="../terms.html">이용약관</a></li>
+        <li><a href="../contact.html">문의하기</a></li>
+        <li><a href="../guide/index.html">로또 가이드</a></li>
+      </ul>
+    </nav>
+    <p>본 사이트는 복권위원회·동행복권과 관계없는 개인이 운영하는 비공식 정보 사이트입니다. 공식 당첨번호와 판매 정보는 <a href="https://dhlottery.co.kr" rel="noopener" target="_blank">동행복권 공식 홈페이지</a>에서 확인하세요.</p>
+    <p>© 2026 로또 6/45 번호 추출기</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

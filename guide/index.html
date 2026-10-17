@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로또 가이드 – 규칙, 확률, 당첨금, 건전한 이용까지 | 로또 6/45 번호 추출기</title>
+<meta name="description" content="로또 6/45의 규칙과 추첨 방식, 등위별 당첨 확률 계산, 흔한 오해, 무작위 번호의 원리, 당첨금 수령과 세금, 건전한 이용 방법을 정리한 가이드 모음입니다.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="로또 6/45 번호 추출기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="로또 가이드 – 규칙, 확률, 당첨금, 건전한 이용까지">
+<meta property="og:description" content="로또 6/45의 규칙과 추첨 방식, 등위별 당첨 확률 계산, 흔한 오해, 무작위 번호의 원리, 당첨금 수령과 세금, 건전한 이용 방법을 정리한 가이드 모음입니다.">
+<meta name="theme-color" content="#d6232a">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+<script>
+  // 저장된 테마 또는 시스템 설정을 렌더링 전에 적용 (깜빡임 방지)
+  (function () {
+    let t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<!-- Google AdSense: 게시자 ID를 받은 뒤 아래 주석을 풀고 ca-pub-0000000000000000 을 본인 ID로 바꾸세요 (콘텐츠 페이지에만 넣습니다)
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+-->
+</head>
+<body>
+<a class="skip" href="#content">본문 바로가기</a>
+<header class="site-header">
+  <div class="wrap top">
+    <a class="brand" href="../index.html"><span class="mark">로또</span>6/45 번호 추출기</a>
+    <button id="theme" type="button" aria-label="테마 전환"><span class="icon"></span><span class="text"></span></button>
+  </div>
+  <nav class="site-nav wrap" aria-label="주요 메뉴">
+    <ul>
+      <li><a href="../index.html">번호 추출기</a></li>
+      <li><a href="../simulator.html">당첨 시뮬레이터</a></li>
+      <li><a href="../guide/index.html" aria-current="page">로또 가이드</a></li>
+      <li><a href="../about.html">사이트 소개</a></li>
+      <li><a href="../contact.html">문의하기</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="content">
+  <div class="wrap">
+    <article class="card prose">
+      <h1>로또 가이드</h1>
+      <p class="lead">로또를 처음 사 보는 분부터 확률이 궁금한 분까지, 로또 6/45를 정확하게 이해하는 데 필요한 내용을 주제별로 정리했습니다.</p>
+      <p class="meta">모든 글은 관련 법령과 공식 판매처 안내, 그리고 직접 계산한 수학적 결과를 바탕으로 작성합니다. 최종 점검일: 2026-10-17</p>
+
+      <h2>기초: 로또는 어떻게 돌아갈까</h2>
+      <div class="guide-list">
+        <a href="how-to-play.html"><strong>로또 6/45 구매·추첨 방법 총정리</strong><span>용지 작성법, 자동·반자동·수동의 차이, 추첨 일정, 등위 기준과 당첨금 배분 방식을 한 번에 정리합니다.</span></a>
+        <a href="prize-claim.html"><strong>당첨금 수령 방법과 세금</strong><span>등위별 수령처와 준비물, 1년의 지급 기한, 200만 원·3억 원을 기준으로 달라지는 세율을 설명합니다.</span></a>
+      </div>
+
+      <h2>수학: 확률과 무작위성</h2>
+      <div class="guide-list">
+        <a href="probability.html"><strong>로또 당첨 확률, 직접 계산해 보기</strong><span>조합(C)을 이용해 1등부터 5등까지의 확률을 단계별로 구하고, 여러 게임을 살 때 확률이 어떻게 변하는지 살펴봅니다.</span></a>
+        <a href="myths.html"><strong>로또에 대한 흔한 오해 7가지</strong><span>“안 나온 번호가 나올 차례”, “연속번호는 잘 안 나온다”, “자동이 더 잘 된다” 같은 믿음을 숫자로 검증합니다.</span></a>
+        <a href="random-numbers.html"><strong>무작위 번호는 어떻게 만들어질까</strong><span>의사 난수와 암호학적 난수의 차이, 모듈로 편향, 피셔-예이츠 셔플까지 공정한 추출기의 원리를 코드로 설명합니다.</span></a>
+      </div>
+
+      <h2>이용 습관: 즐길 수 있는 만큼만</h2>
+      <div class="guide-list">
+        <a href="responsible-play.html"><strong>건전한 복권 이용 가이드</strong><span>예산을 정하는 방법, 스스로 점검할 수 있는 위험 신호, 도움받을 수 있는 상담 창구를 안내합니다.</span></a>
+      </div>
+
+      <h2>직접 해 보기</h2>
+      <p>글로 읽은 내용을 도구로 확인해 보세요. <a href="../index.html">번호 추출기</a>는 공정한 무작위 번호를 뽑아 주고, <a href="../simulator.html">당첨 시뮬레이터</a>는 수십 년 동안 로또를 샀을 때의 결과를 보여 줍니다.</p>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="resp">복권은 <b>만 19세 이상</b>만 구매할 수 있으며, 재미로 즐길 수 있는 금액 안에서만 구매하세요. 도박 문제로 고민된다면 <b>한국도박문제예방치유원 ☎ 1336</b>(24시간, 무료)에서 상담받을 수 있습니다.</p>
+    <nav aria-label="사이트 정보">
+      <ul>
+        <li><a href="../about.html">사이트 소개</a></li>
+        <li><a href="../privacy.html">개인정보처리방침</a></li>
+        <li><a href="../terms.html">이용약관</a></li>
+        <li><a href="../contact.html">문의하기</a></li>
+        <li><a href="../guide/index.html">로또 가이드</a></li>
+      </ul>
+    </nav>
+    <p>본 사이트는 복권위원회·동행복권과 관계없는 개인이 운영하는 비공식 정보 사이트입니다. 공식 당첨번호와 판매 정보는 <a href="https://dhlottery.co.kr" rel="noopener" target="_blank">동행복권 공식 홈페이지</a>에서 확인하세요.</p>
+    <p>© 2026 로또 6/45 번호 추출기</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

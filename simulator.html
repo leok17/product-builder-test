@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로또 당첨 시뮬레이터 – 10년, 100년 동안 사면 어떻게 될까? | 로또 6/45 번호 추출기</title>
+<meta name="description" content="내 번호로 로또를 수십 년 동안 매주 샀을 때의 결과를 브라우저에서 직접 시뮬레이션합니다. 등위별 당첨 횟수, 총 구매액, 회수율과 이론 기대값을 비교해 보세요.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="로또 6/45 번호 추출기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="로또 당첨 시뮬레이터 – 10년, 100년 동안 사면 어떻게 될까?">
+<meta property="og:description" content="내 번호로 로또를 수십 년 동안 매주 샀을 때의 결과를 브라우저에서 직접 시뮬레이션합니다. 등위별 당첨 횟수, 총 구매액, 회수율과 이론 기대값을 비교해 보세요.">
+<meta name="theme-color" content="#d6232a">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script>
+  // 저장된 테마 또는 시스템 설정을 렌더링 전에 적용 (깜빡임 방지)
+  (function () {
+    let t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<!-- Google AdSense: 게시자 ID를 받은 뒤 아래 주석을 풀고 ca-pub-0000000000000000 을 본인 ID로 바꾸세요 (콘텐츠 페이지에만 넣습니다)
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+-->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebApplication",
+ "name": "로또 당첨 시뮬레이터",
+ "applicationCategory": "EducationalApplication",
+ "operatingSystem": "All",
+ "inLanguage": "ko",
+ "offers": {
+  "@type": "Offer",
+  "price": "0",
+  "priceCurrency": "KRW"
+ }
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#content">본문 바로가기</a>
+<header class="site-header">
+  <div class="wrap top">
+    <a class="brand" href="index.html"><span class="mark">로또</span>6/45 번호 추출기</a>
+    <button id="theme" type="button" aria-label="테마 전환"><span class="icon"></span><span class="text"></span></button>
+  </div>
+  <nav class="site-nav wrap" aria-label="주요 메뉴">
+    <ul>
+      <li><a href="index.html">번호 추출기</a></li>
+      <li><a href="simulator.html" aria-current="page">당첨 시뮬레이터</a></li>
+      <li><a href="guide/index.html">로또 가이드</a></li>
+      <li><a href="about.html">사이트 소개</a></li>
+      <li><a href="contact.html">문의하기</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="content">
+  <div class="wrap">
+    <section class="card sim" aria-labelledby="sim-title">
+      <h1 id="sim-title">로또 당첨 시뮬레이터</h1>
+      <p class="desc">“매주 같은 번호로 꾸준히 사면 언젠가는 되지 않을까?” 직접 확인해 보세요. 실제 추첨과 같은 규칙(45개 중 6개 + 보너스 1개)으로 가상의 추첨을 수만~수십만 번 진행합니다.</p>
+
+      <form class="sim-form" id="sim-form" novalidate>
+        <div class="group">
+          <span>내 번호 6개</span>
+          <div class="pick-inputs" id="pick">
+            <input type="number" min="1" max="45" inputmode="numeric" aria-label="첫 번째 번호">
+            <input type="number" min="1" max="45" inputmode="numeric" aria-label="두 번째 번호">
+            <input type="number" min="1" max="45" inputmode="numeric" aria-label="세 번째 번호">
+            <input type="number" min="1" max="45" inputmode="numeric" aria-label="네 번째 번호">
+            <input type="number" min="1" max="45" inputmode="numeric" aria-label="다섯 번째 번호">
+            <input type="number" min="1" max="45" inputmode="numeric" aria-label="여섯 번째 번호">
+            <button type="button" class="btn-sub" id="auto" style="padding:8px 14px">자동 채우기</button>
+          </div>
+        </div>
+        <div class="sim-row">
+          <label class="group"><span>매주 구매 게임 수</span>
+            <select id="per-week">
+              <option value="1">1게임 (1,000원)</option>
+              <option value="5" selected>5게임 (5,000원)</option>
+              <option value="10">10게임 (10,000원)</option>
+            </select>
+          </label>
+          <label class="group"><span>구매 기간</span>
+            <select id="years">
+              <option value="1">1년 (52주)</option>
+              <option value="10" selected>10년</option>
+              <option value="30">30년</option>
+              <option value="100">100년</option>
+              <option value="1000">1,000년</option>
+            </select>
+          </label>
+        </div>
+        <p class="form-error" id="sim-error" role="alert"></p>
+        <button type="submit" class="btn-main" id="run">시뮬레이션 시작</button>
+      </form>
+      <div class="progress" id="progress" aria-hidden="true"><i></i></div>
+
+      <div class="sim-result" id="result" aria-live="polite">
+        <div class="kpis">
+          <div class="kpi"><span>총 구매액</span><b id="k-spent">-</b></div>
+          <div class="kpi"><span>총 당첨금(가정치 포함)</span><b id="k-won">-</b></div>
+          <div class="kpi"><span>손익</span><b id="k-net">-</b></div>
+          <div class="kpi"><span>회수율</span><b id="k-rate">-</b></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>등위</th><th>실제 당첨 횟수</th><th>이론상 기대 횟수</th><th>당첨금 합계</th></tr></thead>
+            <tbody id="rank-body"></tbody>
+          </table>
+        </div>
+        <p class="note">4·5등은 실제와 같은 고정 금액(5만 원, 5천 원)입니다. 1~3등은 회차마다 금액이 달라지므로 1등 20억 원, 2등 6,000만 원, 3등 150만 원(세전)으로 가정해 계산했습니다. 세금은 반영하지 않았습니다.</p>
+      </div>
+    </section>
+
+    <article class="card prose">
+      <h2>시뮬레이션 결과를 읽는 방법</h2>
+      <p>대부분의 경우 결과표는 비슷한 모양을 보입니다. 5등(3개 일치)은 약 45게임에 한 번, 4등(4개 일치)은 약 733게임에 한 번꼴로 나오고, 3등 이상은 10년은 물론 100년을 사도 한 번도 나오지 않는 경우가 대부분입니다. ‘실제 당첨 횟수’와 ‘이론상 기대 횟수’를 나란히 놓고 보면, 게임 수가 많아질수록 두 값이 점점 가까워지는 것도 확인할 수 있습니다. 이것이 <strong>큰 수의 법칙</strong>입니다.</p>
+      <p>회수율은 보통 20~40% 근처에 머뭅니다. 로또 판매액 중 당첨금으로 돌아가는 몫은 약 50%인데, 이 중 상당 부분이 극히 드문 1등에게 몰려 있기 때문입니다. 1등이 한 번 나오는 ‘행운의 시뮬레이션’이 아니라면, 대부분의 구매자가 체감하는 회수율은 평균인 50%보다 낮습니다.</p>
+
+      <h2>1,000원짜리 로또 한 게임의 기대값</h2>
+      <p>기대값은 “같은 행동을 아주 많이 반복했을 때 평균적으로 얻는 금액”입니다. 고정 금액인 4·5등부터 계산해 보면 다음과 같습니다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>등위</th><th class="num">확률</th><th class="num">당첨금</th><th class="num">기대값(1게임당)</th></tr></thead>
+          <tbody>
+            <tr><td>4등 (4개 일치)</td><td class="num">1 / 733</td><td class="num">50,000원</td><td class="num">약 68.2원</td></tr>
+            <tr><td>5등 (3개 일치)</td><td class="num">1 / 44.6</td><td class="num">5,000원</td><td class="num">약 112.2원</td></tr>
+            <tr><td><strong>4·5등 합계</strong></td><td class="num"></td><td class="num"></td><td class="num"><strong>약 180.4원</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>1~3등 당첨금은 고정 금액이 아니라 회차별 판매액에서 4·5등 몫을 뺀 나머지를 나눠 갖는 방식이라, 장기 평균으로 보면 1,000원당 약 320원 정도가 1~3등 몫으로 배정됩니다. 결국 <strong>1,000원을 내면 평균 약 500원이 돌아오는 구조</strong>입니다. 나머지는 복권기금(공익사업 재원)과 판매·운영 비용으로 쓰입니다.</p>
+      <div class="callout">
+        <p>기대값이 구매액보다 낮다는 것은 오래 살수록 손실이 쌓인다는 뜻입니다. 로또는 투자나 재테크 수단이 아니라, 작은 금액으로 즐기는 오락으로 접근하는 것이 바람직합니다.</p>
+      </div>
+
+      <h2>“같은 번호로 계속 사면 언젠가 된다”는 생각</h2>
+      <p>매주 5게임씩 산다면 1년에 260게임입니다. 이 경우 1년 안에 1등이 될 확률은 약 0.0032%이고, 1등을 한 번이라도 할 확률이 50%가 되려면 계산상 <strong>약 2만 1천 년</strong> 동안 매주 사야 합니다. 같은 번호를 고집하든 매주 바꾸든 이 확률은 변하지 않습니다. 매 회차 추첨은 이전 결과와 무관한 독립 시행이기 때문입니다. 이 부분은 <a href="guide/myths.html">로또에 대한 흔한 오해</a>에서 더 자세히 다룹니다.</p>
+
+      <h2>시뮬레이터의 동작 방식</h2>
+      <ul>
+        <li>매 회차마다 1~45 중 서로 다른 7개 번호를 무작위로 뽑아 앞의 6개를 당첨번호, 마지막 1개를 보너스 번호로 사용합니다.</li>
+        <li>여러 게임을 사는 경우 같은 회차의 당첨번호로 각 게임을 채점합니다. 첫 게임은 입력한 번호, 나머지 게임은 매주 새로 뽑은 자동 번호입니다.</li>
+        <li>난수는 번호 추출기와 같은 브라우저 내장 암호학적 난수 생성기를 사용하며, 모든 계산은 기기 안에서만 이루어집니다.</li>
+      </ul>
+
+      <div class="related">
+        <h2>함께 읽으면 좋은 글</h2>
+        <div class="guide-list">
+          <a href="guide/probability.html"><strong>당첨 확률 계산하기</strong><span>등위별 확률이 어떻게 나오는지 조합으로 계산</span></a>
+          <a href="guide/responsible-play.html"><strong>건전한 복권 이용</strong><span>즐길 수 있는 만큼만 사는 방법</span></a>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="resp">복권은 <b>만 19세 이상</b>만 구매할 수 있으며, 재미로 즐길 수 있는 금액 안에서만 구매하세요. 도박 문제로 고민된다면 <b>한국도박문제예방치유원 ☎ 1336</b>(24시간, 무료)에서 상담받을 수 있습니다.</p>
+    <nav aria-label="사이트 정보">
+      <ul>
+        <li><a href="about.html">사이트 소개</a></li>
+        <li><a href="privacy.html">개인정보처리방침</a></li>
+        <li><a href="terms.html">이용약관</a></li>
+        <li><a href="contact.html">문의하기</a></li>
+        <li><a href="guide/index.html">로또 가이드</a></li>
+      </ul>
+    </nav>
+    <p>본 사이트는 복권위원회·동행복권과 관계없는 개인이 운영하는 비공식 정보 사이트입니다. 공식 당첨번호와 판매 정보는 <a href="https://dhlottery.co.kr" rel="noopener" target="_blank">동행복권 공식 홈페이지</a>에서 확인하세요.</p>
+    <p>© 2026 로또 6/45 번호 추출기</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="assets/site.js"></script>
+<script>
+  const pickEls = [...document.querySelectorAll("#pick input")];
+  const errEl = document.getElementById("sim-error");
+  const runBtn = document.getElementById("run");
+  const progress = document.getElementById("progress");
+  const bar = progress.querySelector("i");
+  const PRIZE = [0, 2000000000, 60000000, 1500000, 50000, 5000];
+  const TOTAL = 8145060;
+  const PROB = [0, 1 / TOTAL, 6 / TOTAL, 228 / TOTAL, 11115 / TOTAL, 182780 / TOTAL];
+  const won = n => n.toLocaleString("ko-KR") + "원";
+
+  // 난수를 묶음으로 받아 호출 비용을 줄임
+  const rbuf = new Uint32Array(4096);
+  let rpos = rbuf.length;
+  function fastRand(max) {
+    const limit = Math.floor(0x100000000 / max) * max;
+    let v;
+    do {
+      if (rpos === rbuf.length) { crypto.getRandomValues(rbuf); rpos = 0; }
+      v = rbuf[rpos++];
+    } while (v >= limit);
+    return v % max;
+  }
+
+  const balls = Array.from({ length: 45 }, (_, i) => i + 1);
+  // 부분 피셔-예이츠 셔플로 앞쪽 k개를 무작위 비복원 추출
+  function drawK(k) {
+    for (let i = 0; i < k; i++) {
+      const j = i + fastRand(45 - i);
+      const t = balls[i]; balls[i] = balls[j]; balls[j] = t;
+    }
+    return balls;
+  }
+  // 게임 번호는 길이 46의 표시 배열로 다룸 (set[n] === 1 이면 포함)
+  const autoSet = new Uint8Array(46);
+  function randomTicket() {
+    autoSet.fill(0);
+    const b = drawK(6);
+    for (let i = 0; i < 6; i++) autoSet[b[i]] = 1;
+    return autoSet;
+  }
+  function toSet(nums) {
+    const set = new Uint8Array(46);
+    nums.forEach(n => set[n] = 1);
+    return set;
+  }
+
+  document.getElementById("auto").addEventListener("click", () => {
+    const b = drawK(6).slice(0, 6).sort((a, c) => a - c);
+    pickEls.forEach((el, i) => el.value = b[i]);
+    errEl.textContent = "";
+  });
+
+  function rankOf(set, win, bonus) {
+    let hit = 0;
+    for (let i = 0; i < 6; i++) hit += set[win[i]];
+    if (hit === 6) return 1;
+    if (hit === 5) return set[bonus] ? 2 : 3;
+    if (hit === 4) return 4;
+    if (hit === 3) return 5;
+    return 0;
+  }
+
+  document.getElementById("sim-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const nums = pickEls.map(el => Number(el.value));
+    if (nums.some(n => !Number.isInteger(n) || n < 1 || n > 45)) {
+      errEl.textContent = "1~45 사이의 번호 6개를 모두 입력하거나 ‘자동 채우기’를 눌러 주세요.";
+      return;
+    }
+    if (new Set(nums).size !== 6) { errEl.textContent = "서로 다른 번호 6개를 입력해 주세요."; return; }
+    errEl.textContent = "";
+    run(toSet(nums), +document.getElementById("per-week").value, +document.getElementById("years").value);
+  });
+
+  function run(mySet, perWeek, years) {
+    const weeks = years * 52;
+    const counts = [0, 0, 0, 0, 0, 0];
+    let week = 0;
+    runBtn.disabled = true;
+    runBtn.textContent = "계산 중...";
+    progress.classList.add("show");
+    const CHUNK = Math.max(1, Math.floor(20000 / perWeek));
+    function step() {
+      const end = Math.min(weeks, week + CHUNK);
+      for (; week < end; week++) {
+        // randomTicket이 balls 순서를 바꾸므로 당첨번호는 복사해 둠
+        const b = drawK(7);
+        const win = b.slice(0, 6), bonus = b[6];
+        counts[rankOf(mySet, win, bonus)]++;
+        for (let g = 1; g < perWeek; g++) counts[rankOf(randomTicket(), win, bonus)]++;
+      }
+      bar.style.width = (week / weeks * 100) + "%";
+      if (week < weeks) requestAnimationFrame(step);
+      else finish(counts, weeks * perWeek);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function finish(counts, games) {
+    const spent = games * 1000;
+    let total = 0;
+    const rows = [];
+    for (let r = 1; r <= 5; r++) {
+      const sum = counts[r] * PRIZE[r];
+      total += sum;
+      const exp = games * PROB[r];
+      rows.push(`<tr><td>${r}등</td><td>${counts[r].toLocaleString("ko-KR")}회</td><td>${exp < 0.01 ? exp.toExponential(1) : exp.toLocaleString("ko-KR", { maximumFractionDigits: 2 })}회</td><td>${won(sum)}</td></tr>`);
+    }
+    rows.push(`<tr><td>낙첨</td><td>${counts[0].toLocaleString("ko-KR")}회</td><td>${(games * (1 - PROB.slice(1).reduce((a, b) => a + b, 0))).toLocaleString("ko-KR", { maximumFractionDigits: 0 })}회</td><td>-</td></tr>`);
+    document.getElementById("rank-body").innerHTML = rows.join("");
+    const net = total - spent;
+    document.getElementById("k-spent").textContent = won(spent);
+    document.getElementById("k-won").textContent = won(total);
+    const netEl = document.getElementById("k-net");
+    netEl.textContent = (net > 0 ? "+" : "") + won(net);
+    netEl.className = net < 0 ? "neg" : "pos";
+    document.getElementById("k-rate").textContent = (total / spent * 100).toFixed(1) + "%";
+    document.getElementById("result").classList.add("show");
+    progress.classList.remove("show");
+    bar.style.width = "0";
+    runBtn.disabled = false;
+    runBtn.textContent = "다시 시뮬레이션";
+  }
+</script>
+</body>
+</html>

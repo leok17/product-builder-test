@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문의하기 | 로또 6/45 번호 추출기</title>
+<meta name="description" content="로또 6/45 번호 추출기에 대한 오류 제보, 콘텐츠 정정 요청, 기능 제안, 광고·제휴 문의를 보내 주세요.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="로또 6/45 번호 추출기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="문의하기">
+<meta property="og:description" content="로또 6/45 번호 추출기에 대한 오류 제보, 콘텐츠 정정 요청, 기능 제안, 광고·제휴 문의를 보내 주세요.">
+<meta name="theme-color" content="#d6232a">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script>
+  // 저장된 테마 또는 시스템 설정을 렌더링 전에 적용 (깜빡임 방지)
+  (function () {
+    let t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+</head>
+<body>
+<a class="skip" href="#content">본문 바로가기</a>
+<header class="site-header">
+  <div class="wrap top">
+    <a class="brand" href="index.html"><span class="mark">로또</span>6/45 번호 추출기</a>
+    <button id="theme" type="button" aria-label="테마 전환"><span class="icon"></span><span class="text"></span></button>
+  </div>
+  <nav class="site-nav wrap" aria-label="주요 메뉴">
+    <ul>
+      <li><a href="index.html">번호 추출기</a></li>
+      <li><a href="simulator.html">당첨 시뮬레이터</a></li>
+      <li><a href="guide/index.html">로또 가이드</a></li>
+      <li><a href="about.html">사이트 소개</a></li>
+      <li><a href="contact.html" aria-current="page">문의하기</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="content">
+  <div class="wrap">
+    <section class="card form-card prose" aria-labelledby="contact-title">
+      <h1 id="contact-title">문의하기</h1>
+      <p class="lead">오류 제보, 잘못된 정보 정정 요청, 기능 제안, 광고·제휴 문의를 남겨 주세요. 입력하신 이메일로 답변드립니다.</p>
+      <p class="meta">당첨 번호 예측이나 복권 구매 대행 관련 문의에는 답변하지 않습니다. 공식 당첨 정보는 동행복권 홈페이지에서 확인하세요.</p>
+      <form id="contact-form" action="https://formspree.io/f/xrperrvb" method="POST">
+        <label class="field"><span>문의 유형 <em>*</em></span>
+          <select name="type" id="type" required>
+            <option value="일반 문의">일반 문의</option>
+            <option value="오류 제보">오류 제보</option>
+            <option value="콘텐츠 정정 요청">콘텐츠 정정 요청</option>
+            <option value="기능 제안">기능 제안</option>
+            <option value="광고·제휴">광고·제휴</option>
+          </select>
+        </label>
+        <label class="field"><span>이름 / 회사명 <em>*</em></span>
+          <input type="text" name="name" required maxlength="100" autocomplete="name">
+        </label>
+        <label class="field"><span>이메일 <em>*</em></span>
+          <input type="email" name="email" required maxlength="200" autocomplete="email">
+        </label>
+        <label class="field"><span>문의 내용 <em>*</em></span>
+          <textarea name="message" required maxlength="5000" placeholder="문의 내용을 자유롭게 적어 주세요. 오류 제보라면 페이지 주소와 상황을 함께 알려 주시면 도움이 됩니다."></textarea>
+        </label>
+        <input type="hidden" name="_subject" id="subject" value="[로또 번호 추출기] 일반 문의">
+        <input type="text" name="_gotcha" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="sources">보내 주신 이름, 이메일, 문의 내용은 답변을 위해서만 사용되며, 자세한 처리 방법은 <a href="privacy.html">개인정보처리방침</a>에서 확인할 수 있습니다.</p>
+        <button type="submit" id="send">문의 보내기</button>
+        <p class="form-status" id="form-status" role="status"></p>
+      </form>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="resp">복권은 <b>만 19세 이상</b>만 구매할 수 있으며, 재미로 즐길 수 있는 금액 안에서만 구매하세요. 도박 문제로 고민된다면 <b>한국도박문제예방치유원 ☎ 1336</b>(24시간, 무료)에서 상담받을 수 있습니다.</p>
+    <nav aria-label="사이트 정보">
+      <ul>
+        <li><a href="about.html">사이트 소개</a></li>
+        <li><a href="privacy.html">개인정보처리방침</a></li>
+        <li><a href="terms.html">이용약관</a></li>
+        <li><a href="contact.html">문의하기</a></li>
+        <li><a href="guide/index.html">로또 가이드</a></li>
+      </ul>
+    </nav>
+    <p>본 사이트는 복권위원회·동행복권과 관계없는 개인이 운영하는 비공식 정보 사이트입니다. 공식 당첨번호와 판매 정보는 <a href="https://dhlottery.co.kr" rel="noopener" target="_blank">동행복권 공식 홈페이지</a>에서 확인하세요.</p>
+    <p>© 2026 로또 6/45 번호 추출기</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="assets/site.js"></script>
+<script>
+  const form = document.getElementById("contact-form");
+  const sendBtn = document.getElementById("send");
+  const statusEl = document.getElementById("form-status");
+  const typeEl = document.getElementById("type");
+  typeEl.addEventListener("change", () => {
+    document.getElementById("subject").value = `[로또 번호 추출기] ${typeEl.value}`;
+  });
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    sendBtn.disabled = true;
+    sendBtn.textContent = "보내는 중...";
+    statusEl.className = "form-status";
+    statusEl.textContent = "";
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" }
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.errors ? data.errors.map(x => x.message).join(", ") : "전송 실패");
+      }
+      form.reset();
+      statusEl.classList.add("ok");
+      statusEl.textContent = "문의가 접수되었습니다. 감사합니다!";
+    } catch (err) {
+      statusEl.classList.add("err");
+      statusEl.textContent = "전송에 실패했습니다. 잠시 후 다시 시도해주세요. (" + err.message + ")";
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = "문의 보내기";
+    }
+  });
+</script>
+</body>
+</html>

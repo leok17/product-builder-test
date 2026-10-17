@@ -3,7 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>로또 6/45 번호 추출기</title>
+<title>로또 6/45 번호 추출기 – 공정한 무작위 번호 생성과 확률 가이드</title>
+<meta name="description" content="암호학적 난수로 로또 6/45 번호를 공정하게 뽑아 주는 무료 추출기입니다. 고정수·제외수 설정, 당첨 시뮬레이터, 확률 계산과 당첨금 수령 가이드까지 한곳에서 확인하세요.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="로또 6/45 번호 추출기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="로또 6/45 번호 추출기 – 공정한 무작위 번호 생성과 확률 가이드">
+<meta property="og:description" content="암호학적 난수로 로또 6/45 번호를 공정하게 뽑아 주는 무료 추출기입니다. 고정수·제외수 설정, 당첨 시뮬레이터, 확률 계산과 당첨금 수령 가이드까지 한곳에서 확인하세요.">
+<meta name="theme-color" content="#d6232a">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
 <script>
   // 저장된 테마 또는 시스템 설정을 렌더링 전에 적용 (깜빡임 방지)
   (function () {
@@ -13,427 +22,236 @@
     document.documentElement.dataset.theme = t;
   })();
 </script>
-<style>
-  :root {
-    --red: #d6232a;
-    --red-dark: #a8141a;
-    --pink: #fde8e9;
-    --paper: #fffdf8;
-    --ink: #2b2b2b;
-    --y: #fbc400;
-    --b: #69c8f2;
-    --r: #ff7272;
-    --g: #aaaaaa;
-    --gr: #b0d840;
-    --bg: linear-gradient(160deg, #f6c6c8 0%, #fbe9ea 50%, #fff6d6 100%);
-    --muted: #777;
-    --muted-2: #888;
-    --dash: #e5b9bb;
-    --line: #f1dcdd;
-    --row-alt: #fff7f7;
-    --empty-bg: #eee;
-    --empty-fg: #bbb;
-    --empty-ring: #e2e2e2;
-    --btn-bg: #fff;
-    --shadow: rgba(168, 20, 26, 0.25);
-    --toast-bg: #333;
-    color-scheme: light;
-  }
-  :root[data-theme="dark"] {
-    --red: #e0383f;
-    --red-dark: #8c1016;
-    --pink: #3a2124;
-    --paper: #1f1c1d;
-    --ink: #ece6e6;
-    --bg: linear-gradient(160deg, #2a1618 0%, #181314 50%, #1f1b12 100%);
-    --muted: #a8a0a0;
-    --muted-2: #8f8888;
-    --dash: #5a3a3c;
-    --line: #342b2c;
-    --row-alt: #262122;
-    --empty-bg: #2e2a2a;
-    --empty-fg: #6e6767;
-    --empty-ring: #3c3636;
-    --btn-bg: #1f1c1d;
-    --shadow: rgba(0, 0, 0, 0.55);
-    --toast-bg: #ece6e6;
-    color-scheme: dark;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    padding: 28px 14px 48px;
-    color: var(--ink);
-    transition: background .3s, color .3s;
-  }
-  .ticket {
-    width: 100%;
-    max-width: 520px;
-    background: var(--paper);
-    border-radius: 14px;
-    box-shadow: 0 14px 40px var(--shadow);
-    overflow: hidden;
-    position: relative;
-  }
-  /* 상단 헤더 */
-  .head {
-    background: var(--red);
-    color: #fff;
-    padding: 22px 22px 18px;
-    position: relative;
-  }
-  .head::after {
-    content: "";
-    position: absolute;
-    left: 0; right: 0; bottom: -8px;
-    height: 16px;
-    background:
-      radial-gradient(circle at 8px 0, var(--paper) 7px, transparent 8px) 0 0 / 16px 16px repeat-x;
-  }
-  .head .sub { font-size: 12px; letter-spacing: 3px; opacity: .85; }
-  .head h1 {
-    font-size: 34px;
-    font-weight: 900;
-    letter-spacing: -1px;
-    margin-top: 2px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .head h1 .mark {
-    background: #fff;
-    color: var(--red);
-    border-radius: 6px;
-    padding: 0 9px;
-    font-size: 24px;
-    line-height: 1.4;
-  }
-  .balls-deco { position: absolute; right: 16px; top: 16px; display: flex; gap: 4px; }
-  .balls-deco i {
-    width: 14px; height: 14px; border-radius: 50%;
-    box-shadow: inset -2px -2px 3px rgba(0,0,0,.18);
-  }
-
-  .body { padding: 30px 22px 10px; }
-  .guide {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    color: var(--muted);
-    border-bottom: 2px dashed var(--dash);
-    padding-bottom: 10px;
-    margin-bottom: 8px;
-  }
-  .guide b { color: var(--red); }
-
-  /* 번호 줄 */
-  .row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 8px;
-    border-bottom: 1px solid var(--line);
-    min-height: 66px;
-  }
-  .row:nth-child(even) { background: var(--row-alt); }
-  .label {
-    flex: 0 0 34px;
-    height: 34px;
-    border-radius: 6px;
-    background: var(--red);
-    color: #fff;
-    font-weight: 800;
-    font-size: 18px;
-    display: grid;
-    place-items: center;
-  }
-  .nums { display: flex; gap: 7px; flex: 1; justify-content: space-between; }
-  .ball {
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-weight: 800;
-    font-size: 17px;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,.35);
-    box-shadow: inset -4px -5px 8px rgba(0,0,0,.18), inset 3px 3px 6px rgba(255,255,255,.45), 0 2px 4px rgba(0,0,0,.18);
-    animation: pop .5s cubic-bezier(.2,1.6,.4,1) both;
-  }
-  .ball.empty {
-    background: var(--empty-bg);
-    color: var(--empty-fg);
-    text-shadow: none;
-    box-shadow: inset 0 0 0 2px var(--empty-ring);
-    animation: none;
-  }
-  .c1 { background: var(--y); }
-  .c2 { background: var(--b); }
-  .c3 { background: var(--r); }
-  .c4 { background: var(--g); }
-  .c5 { background: var(--gr); }
-  @keyframes pop {
-    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
-    100% { transform: scale(1) rotate(0); opacity: 1; }
-  }
-
-  /* 버튼 */
-  .actions { padding: 22px; display: flex; gap: 10px; }
-  button {
-    font-family: inherit;
-    cursor: pointer;
-    border: none;
-    border-radius: 10px;
-    font-weight: 800;
-    transition: transform .1s, box-shadow .1s, filter .2s;
-  }
-  button:active { transform: translateY(2px); }
-  #draw {
-    flex: 1;
-    background: var(--red);
-    color: #fff;
-    font-size: 20px;
-    padding: 16px;
-    box-shadow: 0 5px 0 var(--red-dark);
-  }
-  #draw:hover { filter: brightness(1.08); }
-  #draw:active { box-shadow: 0 2px 0 var(--red-dark); }
-  #draw:disabled { filter: grayscale(.4); cursor: wait; }
-  #copy {
-    flex: 0 0 auto;
-    background: var(--btn-bg);
-    color: var(--red);
-    border: 2px solid var(--red);
-    font-size: 15px;
-    padding: 0 18px;
-  }
-  #copy:hover { background: var(--pink); }
-
-  /* 하단 */
-  .legend {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 6px 14px;
-    font-size: 12px;
-    color: var(--muted);
-    padding: 0 22px 14px;
-  }
-  .legend span::before {
-    content: "";
-    display: inline-block;
-    width: 11px; height: 11px;
-    border-radius: 50%;
-    margin-right: 5px;
-    vertical-align: -1px;
-    background: var(--c);
-  }
-  .foot {
-    border-top: 2px dashed var(--dash);
-    margin: 0 22px;
-    padding: 14px 0 22px;
-    font-size: 11.5px;
-    color: var(--muted-2);
-    text-align: center;
-    line-height: 1.7;
-  }
-  .toast {
-    position: fixed;
-    left: 50%; bottom: 30px;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--toast-bg); color: var(--paper);
-    padding: 10px 18px;
-    border-radius: 20px;
-    font-size: 14px;
-    opacity: 0;
-    pointer-events: none;
-    transition: .3s;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* 테마 토글 */
-  #theme {
-    position: fixed;
-    top: 14px; right: 14px;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--btn-bg);
-    color: var(--ink);
-    border: 1px solid var(--dash);
-    border-radius: 999px;
-    padding: 8px 14px;
-    font-size: 13px;
-    box-shadow: 0 4px 12px var(--shadow);
-  }
-  #theme:hover { background: var(--pink); }
-  #theme .icon { font-size: 16px; line-height: 1; }
-  /* 좁은 화면에서는 카드를 가리지 않도록 상단 흐름에 배치 */
-  @media (max-width: 820px) {
-    body { gap: 12px; }
-    #theme { position: static; align-self: flex-end; margin-bottom: 4px; }
-  }
-
-  /* 제휴 문의 */
-  .contact { padding: 24px 22px 26px; }
-  .contact h2 { font-size: 20px; font-weight: 900; color: var(--red); }
-  .contact .desc { font-size: 13px; color: var(--muted); margin: 4px 0 16px; }
-  .field { display: block; margin-bottom: 12px; }
-  .field span { display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px; }
-  .field em { color: var(--red); font-style: normal; }
-  .field input, .field textarea {
-    width: 100%;
-    font: inherit;
-    font-size: 15px;
-    color: var(--ink);
-    background: var(--row-alt);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 10px 12px;
-  }
-  .field textarea { min-height: 110px; resize: vertical; }
-  .field input:focus, .field textarea:focus {
-    outline: none;
-    border-color: var(--red);
-    box-shadow: 0 0 0 3px var(--pink);
-  }
-  .hp { position: absolute; left: -9999px; }
-  #send {
-    width: 100%;
-    background: var(--red);
-    color: #fff;
-    font-size: 16px;
-    padding: 13px;
-    margin-top: 4px;
-    box-shadow: 0 4px 0 var(--red-dark);
-  }
-  #send:hover { filter: brightness(1.08); }
-  #send:disabled { filter: grayscale(.4); cursor: wait; }
-  .form-status { font-size: 13px; margin-top: 12px; text-align: center; min-height: 1em; }
-  .form-status.ok { color: #2e9d4f; }
-  .form-status.err { color: var(--red); }
-
-  /* 댓글 */
-  .comments { padding: 24px 22px 18px; }
-  .comments h2 { font-size: 20px; font-weight: 900; color: var(--red); margin-bottom: 12px; }
-  #disqus_thread { color: var(--ink); min-height: 60px; }
-  #disqus_thread a { color: var(--red); }
-
-  @media (max-width: 420px) {
-    .head h1 { font-size: 28px; }
-    .ball { width: 36px; height: 36px; font-size: 15px; }
-    .nums { gap: 4px; }
-    .label { flex-basis: 30px; height: 30px; }
-  }
-</style>
+<!-- Google AdSense: 게시자 ID를 받은 뒤 아래 주석을 풀고 ca-pub-0000000000000000 을 본인 ID로 바꾸세요 (콘텐츠 페이지에만 넣습니다)
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script>
+-->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebApplication",
+ "name": "로또 6/45 번호 추출기",
+ "applicationCategory": "UtilitiesApplication",
+ "operatingSystem": "All",
+ "inLanguage": "ko",
+ "offers": {
+  "@type": "Offer",
+  "price": "0",
+  "priceCurrency": "KRW"
+ },
+ "description": "브라우저의 암호학적 난수 생성기로 1~45 중 6개 번호를 균일하게 뽑아 주는 무료 웹 도구"
+}
+</script>
 </head>
 <body>
-  <button id="theme" type="button" aria-label="테마 전환"><span class="icon"></span><span class="text"></span></button>
+<a class="skip" href="#content">본문 바로가기</a>
+<header class="site-header">
+  <div class="wrap top">
+    <a class="brand" href="index.html"><span class="mark">로또</span>6/45 번호 추출기</a>
+    <button id="theme" type="button" aria-label="테마 전환"><span class="icon"></span><span class="text"></span></button>
+  </div>
+  <nav class="site-nav wrap" aria-label="주요 메뉴">
+    <ul>
+      <li><a href="index.html" aria-current="page">번호 추출기</a></li>
+      <li><a href="simulator.html">당첨 시뮬레이터</a></li>
+      <li><a href="guide/index.html">로또 가이드</a></li>
+      <li><a href="about.html">사이트 소개</a></li>
+      <li><a href="contact.html">문의하기</a></li>
+    </ul>
+  </nav>
+</header>
 
-  <main class="ticket">
-    <header class="head">
-      <div class="balls-deco">
-        <i style="background:var(--y)"></i><i style="background:var(--b)"></i>
-        <i style="background:var(--r)"></i><i style="background:var(--g)"></i>
-        <i style="background:var(--gr)"></i>
-      </div>
-      <div class="sub">NUMBER PICKER</div>
-      <h1><span class="mark">로또</span>6/45 번호 추출기</h1>
-    </header>
+<main id="content">
+  <div class="wrap">
+    <section class="card ticket" aria-labelledby="tool-title">
+      <header class="head">
+        <div class="balls-deco" aria-hidden="true">
+          <i style="background:var(--y)"></i><i style="background:var(--b)"></i>
+          <i style="background:var(--r)"></i><i style="background:var(--g)"></i>
+          <i style="background:var(--gr)"></i>
+        </div>
+        <div class="sub">NUMBER PICKER</div>
+        <h1 id="tool-title">로또 6/45 번호 추출기</h1>
+        <p>버튼 한 번으로 공정한 무작위 번호를 뽑아 드립니다.</p>
+      </header>
 
-    <section class="body">
-      <div class="guide">
-        <span>1~45 중 <b>6개 번호</b> 선택</span>
-        <span>후보 <b>5게임</b> (A~E)</span>
+      <div class="body">
+        <div class="guide-bar">
+          <span>1~45 중 <b>6개 번호</b> 선택</span>
+          <label>게임 수
+            <select id="games" aria-label="뽑을 게임 수">
+              <option value="1">1게임</option>
+              <option value="2">2게임</option>
+              <option value="3">3게임</option>
+              <option value="4">4게임</option>
+              <option value="5" selected>5게임</option>
+            </select>
+          </label>
+        </div>
+        <div id="rows"></div>
       </div>
-      <div id="rows"></div>
+
+      <div class="actions">
+        <button id="draw" class="btn-main" type="button">번호 뽑기</button>
+        <button id="copy" class="btn-sub" type="button">복사</button>
+      </div>
+
+      <details class="options" id="options">
+        <summary>번호 고정 · 제외 설정 <span id="opt-badge"></span></summary>
+        <div class="inner">
+          <p class="hint">번호를 누를 때마다 <b>기본 → 고정(꼭 포함) → 제외(절대 안 뽑음)</b> 순서로 바뀝니다. 고정은 최대 5개까지 지정할 수 있어요.</p>
+          <div class="num-grid" id="num-grid"></div>
+          <div class="summary-line">
+            <span>고정 <b id="fix-count">0</b>개 · 제외 <b id="ex-count">0</b>개</span>
+            <button type="button" class="link-btn" id="reset-opt">모두 초기화</button>
+          </div>
+        </div>
+      </details>
+
+      <div class="legend" aria-label="번호 색상 구간">
+        <span style="--c:var(--y)">1~10</span>
+        <span style="--c:var(--b)">11~20</span>
+        <span style="--c:var(--r)">21~30</span>
+        <span style="--c:var(--g)">31~40</span>
+        <span style="--c:var(--gr)">41~45</span>
+      </div>
+
+      <p class="foot">
+        재미를 위한 무작위 번호 추출기이며 당첨 확률을 높여 주지 않습니다.<br>
+        어떤 번호 조합이든 1등 확률은 똑같이 <b>8,145,060분의 1</b>입니다.
+      </p>
     </section>
 
-    <div class="actions">
-      <button id="draw">번호 뽑기</button>
-      <button id="copy">복사</button>
-    </div>
+    <article class="card prose">
+      <h2>이 추출기는 어떻게 번호를 뽑나요?</h2>
+      <p>많은 번호 생성기가 <code>Math.random()</code>을 사용하지만, 이 사이트는 브라우저에 내장된 <strong>암호학적 난수 생성기(<code>crypto.getRandomValues</code>)</strong>를 사용합니다. 비밀번호나 보안 키를 만들 때 쓰는 것과 같은 난수원이라 결과를 예측하기 어렵고, 특정 번호가 더 잘 나오는 쏠림도 없습니다.</p>
+      <p>번호는 실제 추첨기처럼 <strong>1부터 45까지 공 45개가 든 통에서 하나씩 꺼내는 방식</strong>으로 뽑습니다. 한 번 뽑힌 번호는 통에서 빠지므로 한 게임 안에서 같은 번호가 두 번 나오지 않습니다. 난수를 번호로 바꿀 때 생기는 미세한 편향(모듈로 편향)도 버림 샘플링으로 없앴기 때문에, 45개 번호가 뽑힐 가능성은 정확히 같습니다. 자세한 원리는 <a href="guide/random-numbers.html">무작위 번호는 어떻게 만들어질까</a>에서 코드와 함께 설명합니다.</p>
+      <p>모든 계산은 여러분의 브라우저 안에서만 이루어집니다. 뽑은 번호는 서버로 전송되거나 저장되지 않습니다.</p>
 
-    <div class="legend">
-      <span style="--c:var(--y)">1~10</span>
-      <span style="--c:var(--b)">11~20</span>
-      <span style="--c:var(--r)">21~30</span>
-      <span style="--c:var(--g)">31~40</span>
-      <span style="--c:var(--gr)">41~45</span>
-    </div>
+      <h2>사용 방법</h2>
+      <ol>
+        <li><strong>게임 수 선택</strong> – 로또 용지 한 장에는 A~E 최대 5게임을 적을 수 있습니다. 필요한 만큼만 고르세요.</li>
+        <li><strong>(선택) 번호 고정·제외</strong> – 생일처럼 꼭 넣고 싶은 번호는 고정하고, 빼고 싶은 번호는 제외할 수 있습니다. 나머지 자리는 남은 번호 중에서 무작위로 채워집니다.</li>
+        <li><strong>번호 뽑기</strong> – 버튼을 누르면 게임별로 6개 번호가 오름차순으로 표시되고, 아래에 번호 합계와 홀짝 비율이 함께 나옵니다.</li>
+        <li><strong>복사</strong> – 결과를 텍스트로 복사해 메모장이나 메신저에 붙여 넣을 수 있습니다.</li>
+      </ol>
+      <div class="callout info">
+        <p><strong>합계·홀짝 정보는 참고용입니다.</strong> 홀짝이 3:3인 조합이 자주 당첨되는 것처럼 보이는 이유는 그런 조합의 수 자체가 많기 때문이지, 특정 조합이 유리해서가 아닙니다. <a href="guide/myths.html">로또에 대한 흔한 오해</a>에서 수학적으로 확인해 보세요.</p>
+      </div>
 
-    <footer class="foot">
-      본 사이트는 재미를 위한 무작위 번호 추출기이며<br>
-      당첨 확률을 높여주지 않습니다. 과몰입 주의, 건전한 복권 문화를 지켜주세요.
-    </footer>
-  </main>
+      <h2>꼭 알아두세요: 숫자로 보는 로또</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>항목</th><th class="num">값</th><th>의미</th></tr></thead>
+          <tbody>
+            <tr><td>가능한 번호 조합 수</td><td class="num">8,145,060개</td><td>45개 중 6개를 고르는 경우의 수</td></tr>
+            <tr><td>1게임 1등 확률</td><td class="num">1 / 8,145,060</td><td>동전 23번 연속 앞면(1/8,388,608)과 비슷</td></tr>
+            <tr><td>5등 이상 당첨 확률</td><td class="num">약 1 / 42</td><td>3개 이상 맞힐 확률</td></tr>
+            <tr><td>당첨금으로 돌아가는 비율</td><td class="num">판매액의 약 50%</td><td>1,000원어치 사면 평균 약 500원이 돌아옴</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>등위별 확률을 직접 계산하는 과정은 <a href="guide/probability.html">로또 당첨 확률 계산하기</a>에, 실제로 수십 년 동안 샀을 때 어떤 결과가 나오는지는 <a href="simulator.html">당첨 시뮬레이터</a>에서 확인할 수 있습니다.</p>
 
-  <section class="ticket contact" aria-labelledby="contact-title">
-    <h2 id="contact-title">제휴 문의</h2>
-    <p class="desc">광고·협업·제휴 제안을 남겨주시면 이메일로 답변드립니다.</p>
-    <form id="contact-form" action="https://formspree.io/f/xrperrvb" method="POST">
-      <label class="field"><span>이름 / 회사명 <em>*</em></span>
-        <input type="text" name="name" required maxlength="100" autocomplete="organization">
-      </label>
-      <label class="field"><span>이메일 <em>*</em></span>
-        <input type="email" name="email" required maxlength="200" autocomplete="email">
-      </label>
-      <label class="field"><span>문의 내용 <em>*</em></span>
-        <textarea name="message" required maxlength="5000" placeholder="제휴 형태, 기간, 예산 등을 자유롭게 적어주세요."></textarea>
-      </label>
-      <input type="hidden" name="_subject" value="[로또 번호 추출기] 제휴 문의">
-      <input type="text" name="_gotcha" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button type="submit" id="send">문의 보내기</button>
-      <p class="form-status" id="form-status" role="status"></p>
-    </form>
-  </section>
+      <h2>로또 가이드</h2>
+      <div class="guide-list">
+        <a href="guide/how-to-play.html"><strong>로또 6/45 구매·추첨 방법</strong><span>용지 작성법부터 추첨 시간, 등위 기준까지</span></a>
+        <a href="guide/probability.html"><strong>당첨 확률 계산하기</strong><span>조합으로 1등~5등 확률을 직접 구해 봅니다</span></a>
+        <a href="guide/myths.html"><strong>로또에 대한 흔한 오해</strong><span>“안 나온 번호가 나올 차례”는 사실일까?</span></a>
+        <a href="guide/random-numbers.html"><strong>무작위 번호의 원리</strong><span>공정한 추출기는 어떻게 만들까</span></a>
+        <a href="guide/prize-claim.html"><strong>당첨금 수령과 세금</strong><span>등위별 수령처, 지급 기한, 세율 정리</span></a>
+        <a href="guide/responsible-play.html"><strong>건전한 복권 이용</strong><span>예산 정하기와 위험 신호 체크리스트</span></a>
+      </div>
 
-  <section class="ticket comments" aria-labelledby="comments-title">
-    <h2 id="comments-title">댓글</h2>
-    <div id="disqus_thread"></div>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </section>
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details>
+          <summary>이 추출기로 뽑은 번호가 당첨 확률이 더 높나요?</summary>
+          <p>아닙니다. 로또는 매 회차 독립적인 무작위 추첨이라 어떤 방법으로 고른 번호든 1등 확률은 1/8,145,060으로 같습니다. 이 사이트는 고민 없이 공정하게 번호를 고르도록 돕는 도구일 뿐, 당첨을 예측하거나 보장하지 않습니다.</p>
+        </details>
+        <details>
+          <summary>‘자동’으로 사는 것과 이 추출기로 뽑은 번호를 ‘수동’으로 적는 것은 다른가요?</summary>
+          <p>확률은 같습니다. 판매점의 자동 선택도 무작위로 번호를 정하므로 수학적으로는 차이가 없습니다. 다만 직접 고른 번호를 기록해 두고 싶거나, 여러 장을 살 때 번호가 겹치지 않게 관리하고 싶을 때 유용합니다.</p>
+        </details>
+        <details>
+          <summary>뽑은 번호가 저장되나요?</summary>
+          <p>저장하지 않습니다. 번호 생성은 모두 브라우저 안에서 처리되며 페이지를 닫으면 사라집니다. 필요하면 ‘복사’ 버튼으로 직접 보관하세요.</p>
+        </details>
+        <details>
+          <summary>여기서 로또를 살 수 있나요?</summary>
+          <p>아니요. 이 사이트는 정보 제공용 비공식 사이트이며 복권을 판매하지 않습니다. 로또 6/45는 전국 복권 판매점이나 동행복권 공식 홈페이지에서만 구매할 수 있습니다.</p>
+        </details>
+      </div>
+    </article>
 
-  <div class="toast" id="toast">복사되었습니다</div>
+    <section class="card comments" aria-labelledby="comments-title">
+      <h2 id="comments-title">댓글</h2>
+      <div id="disqus_thread"></div>
+      <noscript>댓글을 보려면 자바스크립트를 켜 주세요. <a href="https://disqus.com/?ref_noscript">Disqus 댓글</a></noscript>
+    </section>
+  </div>
+</main>
 
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="resp">복권은 <b>만 19세 이상</b>만 구매할 수 있으며, 재미로 즐길 수 있는 금액 안에서만 구매하세요. 도박 문제로 고민된다면 <b>한국도박문제예방치유원 ☎ 1336</b>(24시간, 무료)에서 상담받을 수 있습니다.</p>
+    <nav aria-label="사이트 정보">
+      <ul>
+        <li><a href="about.html">사이트 소개</a></li>
+        <li><a href="privacy.html">개인정보처리방침</a></li>
+        <li><a href="terms.html">이용약관</a></li>
+        <li><a href="contact.html">문의하기</a></li>
+        <li><a href="guide/index.html">로또 가이드</a></li>
+      </ul>
+    </nav>
+    <p>본 사이트는 복권위원회·동행복권과 관계없는 개인이 운영하는 비공식 정보 사이트입니다. 공식 당첨번호와 판매 정보는 <a href="https://dhlottery.co.kr" rel="noopener" target="_blank">동행복권 공식 홈페이지</a>에서 확인하세요.</p>
+    <p>© 2026 로또 6/45 번호 추출기</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="assets/site.js"></script>
 <script>
   const LABELS = ["A", "B", "C", "D", "E"];
   const rowsEl = document.getElementById("rows");
   const drawBtn = document.getElementById("draw");
   const copyBtn = document.getElementById("copy");
+  const gamesEl = document.getElementById("games");
+  const gridEl = document.getElementById("num-grid");
   let current = [];
+  // 번호별 상태: 0 기본, 1 고정, 2 제외
+  const state = new Array(46).fill(0);
+  const MAX_FIX = 5;
+  const MAX_EX = 39; // 최소 6개는 남아 있어야 한 게임을 채울 수 있음
 
-  const colorClass = n => n <= 10 ? "c1" : n <= 20 ? "c2" : n <= 30 ? "c3" : n <= 40 ? "c4" : "c5";
-
-  // 암호학적 난수로 균일하게 정수 뽑기
-  function randInt(max) {
-    const limit = Math.floor(0x100000000 / max) * max;
-    const buf = new Uint32Array(1);
-    do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
-    return buf[0] % max;
-  }
+  const count = s => state.filter(v => v === s).length;
 
   function pickSix() {
-    const pool = Array.from({ length: 45 }, (_, i) => i + 1);
-    const out = [];
-    for (let i = 0; i < 6; i++) out.push(pool.splice(randInt(pool.length), 1)[0]);
+    const fixed = [], pool = [];
+    for (let n = 1; n <= 45; n++) {
+      if (state[n] === 1) fixed.push(n);
+      else if (state[n] === 0) pool.push(n);
+    }
+    const out = fixed.slice();
+    while (out.length < 6) out.push(pool.splice(randInt(pool.length), 1)[0]);
     return out.sort((a, b) => a - b);
   }
 
+  function statText(nums) {
+    const sum = nums.reduce((a, b) => a + b, 0);
+    const odd = nums.filter(n => n % 2).length;
+    return `합계 ${sum} · 홀 ${odd} : 짝 ${6 - odd}`;
+  }
+
   function renderEmpty() {
-    rowsEl.innerHTML = LABELS.map(l => `
+    const n = +gamesEl.value;
+    current = [];
+    rowsEl.innerHTML = LABELS.slice(0, n).map(l => `
       <div class="row">
         <div class="label">${l}</div>
         <div class="nums">${'<div class="ball empty">?</div>'.repeat(6)}</div>
+        <div class="stat"></div>
       </div>`).join("");
+    drawBtn.textContent = "번호 뽑기";
   }
 
   function renderRow(i, nums) {
@@ -441,21 +259,56 @@
     row.querySelector(".nums").innerHTML = nums.map((n, k) =>
       `<div class="ball ${colorClass(n)}" style="animation-delay:${k * 70}ms">${n}</div>`
     ).join("");
+    row.querySelector(".stat").textContent = statText(nums);
   }
 
   function draw() {
+    const n = +gamesEl.value;
     drawBtn.disabled = true;
-    current = Array.from({ length: 5 }, pickSix);
+    current = Array.from({ length: n }, pickSix);
     current.forEach((nums, i) => setTimeout(() => renderRow(i, nums), i * 350));
-    setTimeout(() => { drawBtn.disabled = false; drawBtn.textContent = "다시 뽑기"; }, 5 * 350 + 300);
+    setTimeout(() => { drawBtn.disabled = false; drawBtn.textContent = "다시 뽑기"; }, n * 350 + 300);
   }
 
-  function toast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 1600);
+  function renderGrid() {
+    gridEl.innerHTML = "";
+    for (let n = 1; n <= 45; n++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = n;
+      b.dataset.n = n;
+      gridEl.appendChild(b);
+    }
+    syncGrid();
   }
+
+  function syncGrid() {
+    for (const b of gridEl.children) {
+      const s = state[+b.dataset.n];
+      b.className = s === 1 ? "fix" : s === 2 ? "ex" : "";
+      b.setAttribute("aria-label", `${b.dataset.n}번 ${s === 1 ? "고정" : s === 2 ? "제외" : "기본"}`);
+    }
+    const f = count(1), e = count(2);
+    document.getElementById("fix-count").textContent = f;
+    document.getElementById("ex-count").textContent = e;
+    document.getElementById("opt-badge").textContent = f || e ? `(고정 ${f} · 제외 ${e})` : "";
+  }
+
+  gridEl.addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    const n = +b.dataset.n;
+    let next = (state[n] + 1) % 3;
+    if (next === 1 && count(1) >= MAX_FIX) { next = 2; toast(`고정 번호는 최대 ${MAX_FIX}개까지예요`); }
+    if (next === 2 && count(2) >= MAX_EX) { next = 0; toast("더 이상 제외할 수 없어요"); }
+    state[n] = next;
+    syncGrid();
+  });
+
+  document.getElementById("reset-opt").addEventListener("click", () => {
+    state.fill(0);
+    syncGrid();
+  });
 
   copyBtn.addEventListener("click", async () => {
     if (!current.length) return toast("먼저 번호를 뽑아주세요");
@@ -465,67 +318,25 @@
   });
 
   drawBtn.addEventListener("click", draw);
-
-  const form = document.getElementById("contact-form");
-  const sendBtn = document.getElementById("send");
-  const statusEl = document.getElementById("form-status");
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
-    sendBtn.disabled = true;
-    sendBtn.textContent = "보내는 중...";
-    statusEl.className = "form-status";
-    statusEl.textContent = "";
-    try {
-      const res = await fetch(form.action, {
-        method: "POST",
-        body: new FormData(form),
-        headers: { Accept: "application/json" }
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.errors ? data.errors.map(x => x.message).join(", ") : "전송 실패");
-      }
-      form.reset();
-      statusEl.classList.add("ok");
-      statusEl.textContent = "문의가 접수되었습니다. 감사합니다!";
-    } catch (err) {
-      statusEl.classList.add("err");
-      statusEl.textContent = "전송에 실패했습니다. 잠시 후 다시 시도해주세요. (" + err.message + ")";
-    } finally {
-      sendBtn.disabled = false;
-      sendBtn.textContent = "문의 보내기";
-    }
-  });
-
-  const themeBtn = document.getElementById("theme");
-  function applyTheme(t) {
-    document.documentElement.dataset.theme = t;
-    const dark = t === "dark";
-    themeBtn.querySelector(".icon").textContent = dark ? "☀️" : "🌙";
-    themeBtn.querySelector(".text").textContent = dark ? "라이트 모드" : "다크 모드";
-    themeBtn.setAttribute("aria-pressed", dark);
-    // Disqus는 로드 시점의 글자색으로 테마를 정하므로, 전환 시 다시 불러와 맞춤
-    if (window.DISQUS) DISQUS.reset({ reload: true, config: disqus_config });
-  }
-  themeBtn.addEventListener("click", () => {
-    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-    applyTheme(next);
-    try { localStorage.setItem("theme", next); } catch (e) {}
-  });
-  applyTheme(document.documentElement.dataset.theme);
+  gamesEl.addEventListener("change", renderEmpty);
+  renderGrid();
+  renderEmpty();
 
   // Disqus 댓글
   var disqus_config = function () {
-    this.page.url = location.origin + location.pathname;
+    this.page.url = location.origin + location.pathname.replace(/index\.html$/, "");
     this.page.identifier = "lotto-645-home";
   };
+  // Disqus는 로드 시점의 글자색으로 테마를 정하므로, 전환 시 다시 불러와 맞춤
+  document.addEventListener("themechange", () => {
+    if (window.DISQUS) DISQUS.reset({ reload: true, config: disqus_config });
+  });
   (function () {
     var d = document, s = d.createElement("script");
     s.src = "https://productbuildertest-3.disqus.com/embed.js";
     s.setAttribute("data-timestamp", +new Date());
     (d.head || d.body).appendChild(s);
   })();
-  renderEmpty();
 </script>
 </body>
 </html>
